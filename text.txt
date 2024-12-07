@@ -1,0 +1,38 @@
+-DashBoard
+    +Biểu đồ theo lượng sản phẩm đã mua theo từng nhà cung cấp
+    +
+-Quản lý đơn hàng
+    +Đơn hàng đã mua
+-Thông tin nhà cung cấp
+    +Bảng ghi thông tin liên hệ 
+        -Tên nhà cung cấp: Tên chính thức của công ty hoặc cá nhân cung cấp hàng hóa, dịch vụ.
+        -Mã số nhà cung cấp: Mã định danh duy nhất được cấp cho nhà cung cấp trong hệ thống quản lý.
+        -Ngành nghề kinh doanh: Lĩnh vực hoặc ngành mà nhà cung cấp hoạt động.
+        -Rating
+        -Địa chỉ: Địa chỉ trụ sở chính hoặc các chi nhánh.
+        -Số điện thoại: Số điện thoại chính hoặc số điện thoại của các cá nhân phụ trách.
+        -Email: Địa chỉ email để liên lạc chính thức.
+        -Người liên hệ chính: Tên và chức vụ của người đại diện chính.
+        -Các điều khoản và điều kiện chính: Quy định chi tiết về trách nhiệm, cam kết và nghĩa vụ của các bên.
+    +Chọn 1 nhà cung cấp
+        -Hiển thị các sản phẩm mà nhà cung cấp đó có thể mang tới
+        -Sản phẩm bao gồm id. tên sp, đơn giá , (nếu là sản phẩm thô thì thêm phần)
+    +Hiển thị danh mục sản phẩm nhà cung cấp đó đang bán 
+        -Thông tin sản phẩm
+        -Tên 
+        -Số lượng (nếu là sản phẩm vật lý)
+        -rating của sản phẩm
+        -giá cả (có thể bán lẻ hoặc bán theo số lượng lớn)
+-Đặt mua
+    -Đặt mua theo đơn lẻ
+    -Đặt mua theo hợp đồng
+-Quản lý hợp đồng kí kết
+    -Hợp đồng đã ký kết với bên nhà cung cấp đã duyệt và thông qua
+    -Hợp đồng đang chờ xử lý
+-Blog đánh giá
+    + bình luận
+    + đánh giá từ người dùng
+    + rating
+-Thông tin cá nhân
+    -Thông tin chủ sở hữu
+    -Thông tin về doanh nghiệp đang sở hữu

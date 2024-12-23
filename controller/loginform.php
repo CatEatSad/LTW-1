@@ -11,7 +11,7 @@ if ($conn->connect_error) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate empty inputs
     if (empty($_POST['email']) || empty($_POST['password'])) {
-        header("Location: login.php?error=Vui lòng nhập đầy đủ email và mật khẩu");
+        header("Location: ../view/login.php?error=Vui lòng nhập đầy đủ email và mật khẩu");
         exit();
     }
 
@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Check email format
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        header("Location: login.php?error=Email không hợp lệ");
+        header("Location: ../view/login.php?error=Email không hợp lệ");
         exit();
     }
 
@@ -36,14 +36,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['loggedin'] = true;
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['email'] = $user['email'];
-            header("Location: dashboard.php");
+            header("Location: ../view/dashboard.php");
             exit();
         } else {
-            header("Location: login.php?error=Email hoặc mật khẩu không chính xác");
+            header("Location: ../view/login.php?error=Email hoặc mật khẩu không chính xác");
             exit();
         }
     } else {
-        header("Location: login.php?error=Email hoặc mật khẩu không chính xác");
+        header("Location: ../view/login.php?error=Email hoặc mật khẩu không chính xác");
         exit();
     }
 

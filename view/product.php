@@ -5,144 +5,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$conn = new mysqli("localhost", "root", "root", "LTW");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Get user's business
-$user_id = $_SESSION['user_id'];
-$stmt = $conn->prepare("SELECT id FROM businesses WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$business = $stmt->get_result()->fetch_assoc();
-
-if (!$business) {
-    die("No business found for this user");
-}
-
-$business_id = $business['id'];
-
-// Update the upload directory to use relative path
-$upload_dir = "../product_image";
-if (!file_exists($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
-}
-
-// Handle CRUD operations
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if (isset($_POST['add_product'])) {
-        // First insert the product to get the ID
-        $stmt = $conn->prepare("INSERT INTO products (product_name, price, business_id, description) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sdis", 
-            $_POST['product_name'],
-            $_POST['price'],
-            $business_id,
-            $_POST['description']
-        );
-        $stmt->execute();
-        $product_id = $conn->insert_id;
-
-        // Then handle the image
-        $image_path = '';
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $filename = $product_id . '.' . $file_extension;
-            $target_path = $upload_dir . '/' . $filename;
-            $db_image_path = "../product_image/" . $filename;
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
-                // Update the product with the image path
-                $stmt = $conn->prepare("UPDATE products SET image=? WHERE id=?");
-                $stmt->bind_param("si", $db_image_path, $product_id);
-                $stmt->execute();
-            }
-        }
-    }
-
-    if (isset($_POST['edit_product'])) {
-        $image_path = $_POST['current_image'];
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $file_extension = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
-            $filename = $_POST['product_id'] . '.' . $file_extension;
-            $target_path = $upload_dir . '/' . $filename;
-            $db_image_path = "../product_image/" . $filename;
-            
-            // Delete old image if exists and different from new path
-            if (file_exists($_POST['current_image']) && $_POST['current_image'] != $db_image_path) {
-                unlink($_POST['current_image']);
-            }
-            
-            if (move_uploaded_file($_FILES['image']['tmp_name'], $target_path)) {
-                $image_path = $db_image_path;
-            }
-        }
-
-        $stmt = $conn->prepare("UPDATE products SET product_name=?, price=?, image=?, description=? WHERE id=? AND business_id=?");
-        $stmt->bind_param("sdssii", 
-            $_POST['product_name'],
-            $_POST['price'],
-            $image_path,
-            $_POST['description'],
-            $_POST['product_id'],
-            $business_id
-        );
-        $stmt->execute();
-    }
-
-    if (isset($_POST['delete_product'])) {
-        // Delete image file first
-        $stmt = $conn->prepare("SELECT image FROM products WHERE id=? AND business_id=?");
-        $stmt->bind_param("ii", $_POST['product_id'], $business_id);
-        $stmt->execute();
-        $result = $stmt->get_result()->fetch_assoc();
-        
-        if ($result && file_exists($result['image'])) {
-            unlink($result['image']);
-        }
-
-        // Then delete database record
-        $stmt = $conn->prepare("DELETE FROM products WHERE id=? AND business_id=?");
-        $stmt->bind_param("ii", $_POST['product_id'], $business_id);
-        $stmt->execute();
-    }
-    
-    header("Location: product.php");
-    exit();
-}
-
-// Fetch only products belonging to user's business
-$stmt = $conn->prepare("SELECT * FROM products WHERE business_id = ?");
-$stmt->bind_param("i", $business_id);
-$stmt->execute();
-$products = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-
-// Add this helper function before the HTML
-function displayStarRating($rating) {
-    $output = '';
-    $rating = floatval($rating);
-    
-    // Full stars
-    for ($i = 1; $i <= floor($rating); $i++) {
-        $output .= '<i class="fas fa-star text-warning"></i>';
-    }
-    
-    // Half star
-    if ($rating - floor($rating) >= 0.5) {
-        $output .= '<i class="fas fa-star-half-alt text-warning"></i>';
-    }
-    
-    // Empty stars
-    for ($i = ceil($rating); $i < 5;$i++) {
-        $output .= '<i class="far fa-star text-warning"></i>';
-    }
-    
-    return $output;
-}
-
 ?>
-
-
+<?php include "../modules/dataconn.php"?>
+<?php include "product_module.php"?>
 <?php include "header.php"?>
             <div id="layoutSidenav_content">
                 <main>
@@ -197,7 +62,7 @@ function displayStarRating($rating) {
                         </div>
                     </div>
 
-                    <!-- Add Product Modal -->
+                    <!-- thêm sản phẩm -->
                     <div class="modal fade" id="addProductModal" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -233,7 +98,7 @@ function displayStarRating($rating) {
                         </div>
                     </div>
 
-                    <!-- Edit Product Modal -->
+                    <!-- sửa sản phẩm-->
                     <div class="modal fade" id="editProductModal" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
